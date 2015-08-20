@@ -66,21 +66,26 @@ if (!Yii::$app->user->isGuest) {
             } else
             {
                 echo Nav::widget([
-                    'options' => ['class' => 'nav nav-pills nav-stacked', 'id' => 'myMenu'],
+                    'options' => [
+                        'class' => 'nav nav-pills nav-stacked', 
+                        'id' => 'myMenu',
+                    ],
                     'items' => [
-                            '<li role="presentation">
-                              <a href="/basic/web/index.php?r=site%2Fview-profile">
-                                <span class="glyphicon glyphicon-user"></span><br>PROFILE</a>
-                            </li>',
-                            '<li role="presentation">
-                              <a href="/basic/web/index.php?r=job%2Findex">
-                                <span class="glyphicon glyphicon-list-alt"></span><br>JOBS LIST</a>
-                            </li>',
-                            '<li role="presentation">
-                              <a href="/basic/web/index.php?r=meterics%2Findex">
-                                <span class="glyphicon glyphicon-stats"></span><br>METRICS</a>
-                            </li>'
-                    ]
+                            [
+                                'label' => '<span class="glyphicon glyphicon-user"></span><br>PROFILE',
+                                'url' => ['site/view-profile'],
+                            ],
+                            [
+                                'label' => '<span class="glyphicon glyphicon-list-alt"></span>
+                                    <br>JOBS LIST',
+                                    'url' => ['job/index'],
+                            ],
+                            [
+                                'label' => '<span class="glyphicon glyphicon-stats"></span><br>METRICS',
+                                'url' => ['meterics/index'],
+                            ]
+                    ],
+                    'encodeLabels' => false,
                 ]);
             }
             ?>
