@@ -14,7 +14,6 @@ class LoginForm extends Model
     public $username;
     public $password;
     public $password_hash;
-    public $rememberMe = true;
 
     private $_user = false;
 
@@ -27,8 +26,6 @@ class LoginForm extends Model
         return [
             // username and password are both required
             [['username', 'password'], 'required'],
-            // rememberMe must be a boolean value
-            ['rememberMe', 'boolean'],
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
         ];
@@ -49,14 +46,20 @@ class LoginForm extends Model
                 ['username' => $this->username]
             );
 
-            if (!Yii::$app->getSecurity()
-                ->validatePassword($this->password,$identity->password_hash))
-            {
-                $identity = NULL;
-            }
+            if($identity){
+                if (!Yii::$app->getSecurity()
+                    ->validatePassword($this->password,$identity->password_hash))
+                {
+                    $identity = NULL;
+                }
+                if (!$identity) {
+                    $this->addError($attribute, 'Incorrect Password.');
 
-            if (!$identity) {
-                $this->addError($attribute, $this->password_hash);
+                }
+            } else
+            {
+                $this->addError($attribute, '');
+                $this->addError('username', 'Username not found.');
             }
         }
     }
@@ -68,7 +71,7 @@ class LoginForm extends Model
     public function login()
     {
         if ($this->validate()) {
-            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);
+            return Yii::$app->user->login($this->getUser());
         } else {
             return false;
         }

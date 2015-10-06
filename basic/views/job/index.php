@@ -10,8 +10,6 @@ use yii\grid\GridView;
 $this->title = 'Job Listings in Your Region';
 ?>
 <div class="job-index">
-
-    <h1  class="text-center"><?= Html::encode($this->title) ?></h1>
     <?php //echo $this->render('_search', ['model' => $searchModel]); ?>    
 
     <?= GridView::widget([

@@ -1,0 +1,1 @@
+<h2 class="text-center">Password Succesfully Changed! Please Login.</h2>

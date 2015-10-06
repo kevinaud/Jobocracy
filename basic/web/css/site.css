@@ -3,6 +3,13 @@ body {
     height: 100%;
     font-family: 'PT Sans', sans-serif;
     min-width: 1200px;
+    background: rgb(229,229,229);
+}
+a {
+   outline: 0;
+}
+input::-moz-focus-inner { 
+  border: 0; 
 }
 #yii-debug-toolbar {
     bottom: 0;
@@ -26,7 +33,6 @@ body {
 .wrap > .container {
     padding: 70px 15px 20px;
 }
-
 .footer {
     height: 60px;
     padding-top: 20px;
@@ -108,10 +114,6 @@ a.desc:after {
 {
     background: rgb(70,117,162);
 }
-.rapidDrop
-{
-    padding-right: 25px;
-}
 .top-bar
 {
     height: 100px;
@@ -163,17 +165,18 @@ a.desc:after {
 .main-content
 {
     min-height: 100%;
-    background: rgb(229,229,229);
 }
 .side-nav > ul 
 {
     width: 100%;
     padding: 0;
     margin: 0;
+    margin-left: -15px;
+    margin-right: -27px;
 }
-.content > .col-xs-2
+.side-nav > ul > li 
 {
-    padding-right: 0;
+    margin-right: -27px;
 }
 .side-nav > .nav
 {
@@ -218,7 +221,7 @@ a.desc:after {
     background-color: #1D2027;
     border-left: 5px solid #427CE3;
 }
-.glyphicon-user,.glyphicon-list-alt,.glyphicon-stats
+.glyphicon-user,.glyphicon-list-alt,.glyphicon-stats,.glyphicon-tags
 {
     font-size: 45px;
 }
@@ -233,4 +236,115 @@ a.desc:after {
 .home-logo
 {
     margin-top: 50px;
+}
+.data-module
+{
+    background: rgb(240,240,240);
+    height: 100%;
+}
+.module-row-2
+{
+    
+    
+}
+.areachart-module
+{
+    border-bottom: 2px solid #E5E5E5;
+    border-bottom-width: 2px;
+}
+.pie-module
+{
+    border-top: 2px solid #E5E5E5;
+    border-top-width: 2px;
+    border-right: 2px solid #E5E5E5;
+    border-right-width: 2px;
+    padding-top: 20px;
+    padding-bottom: 90px;
+}
+.rapidlyHiring
+{
+    border-top: 2px solid #E5E5E5;
+    border-top-width: 2px;
+    border-left: 2px solid #E5E5E5;
+    border-left-width: 2px;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+.rapidDrop
+{
+    padding-right: 25px;
+}
+.line-title
+{
+    margin-bottom: -18px;
+}
+.pie-list > ul > li
+{
+    list-style-type: none;
+    border-bottom: 1px solid #CCCCCC;
+}
+.pie-list ul > li > .glyphicon
+{
+    font-size: 10px;
+}
+.pie-list ul > li > .glyphicon-triangle-top
+{
+    color: #60CED0;
+}
+.pie-list ul > li > .glyphicon-triangle-bottom
+{
+    color: #427CE3;
+}
+.pie-list > ul
+{
+    padding-left: 0;
+}
+.pie-list
+{
+    white-space: nowrap;
+}
+.month-change > ul
+{
+    margin-left: 30px;
+    margin-right: 30px;
+}
+.footer-left
+{
+    height: 100%;
+    background-color: #262A33;
+}
+.footer-right
+{
+    height: 100%;
+}
+.footer
+{
+    padding-top: 0;
+    height: 50px;
+}
+.region-list > .col-sm-6 
+{
+    padding: 0;
+}
+.region-list > .control-label
+{
+    text-align: left;
+    white-space:nowrap;
+}
+.register-submit
+{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.forgot-title
+{
+    margin-bottom: 40px;
+}
+.update-region-title
+{
+    margin-bottom: 40px;
+}
+.up-info-btn
+{
+    
 }

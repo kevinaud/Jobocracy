@@ -22,8 +22,7 @@ class AppAsset extends AssetBundle
         'css/bootstrap-multiselect.css'
     ];
     public $js = [
-        //'js/bootstrap-multiselect.js',
-        //'js/bootstrap-multiselect-collapsible-groups.js'
+    
     ];
     public $depends = [
         'yii\web\YiiAsset',

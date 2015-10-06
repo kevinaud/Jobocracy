@@ -37,8 +37,7 @@ class MetericsController extends Controller
 	        ]);
 
 	        $counties = ArrayHelper::getColumn($access, 'county_id');
-
-            $industry = $this->countIndustry($counties);
+            $numCounties = count($counties);
 
 			$model = new IndustryForm();
 			$model->load(Yii::$app->request->post());	
@@ -46,28 +45,35 @@ class MetericsController extends Controller
 			$dataProvider = $this->filter($counties,$model->field);
 
             $allIndrLine = [['Date', 'All Industries']];
-            $byIndrLine = [['Date', 'Education', 'Health/Medicine', 'Agriculture', 
-                            'Engineering/Manufacturing/Tech','Business']];
 
             $queryPast = (new \yii\db\Query())
                 ->select(['*'])
                 ->from('past_listings')
                 ->where(['county_id' => $counties])
-                ->orderBy(['date' => 'SORT_DESC'])
-                ->limit(10)
+                ->orderBy(['date' => SORT_DESC])
+                ->limit(10 * $numCounties)
                 ->all();
-                
 
-            //$allIndrLine = array_merge($allIndrLine,$this->countAllIndrPast($queryPast));
-            //$byIndrLine = $this->countByIndrPast($queryPast);
+            $lastMonthCounties = [];
+
+            for ($i=0; $i < $numCounties; $i++) { 
+                array_push($lastMonthCounties, $queryPast[(3 * $numCounties) + $i]);
+            }            
+
+            $industry = $this->countIndustry($counties);
+            $lastMonthInd = $this->countLastMonthIndustry($lastMonthCounties,$numCounties);
+            $monthChange = $this->countMonthChange($industry,$lastMonthInd);
+
+            $byIndrLine = $this->countByIndrPast($queryPast, $numCounties);
 
 			return $this->render('index', [
                 'dataProvider' => $dataProvider,
                 'model' => $model,
                 'industry' => $industry,
-                //'allIndrLine' => $allIndrLine,
-                //'byIndrLine' => $byIndrLine,
-            ]);
+                'lastMonthInd' => $lastMonthInd,
+                'monthChange' => $monthChange,
+                'byIndrLine' => $byIndrLine,
+            ]); 
         }
 	}
 
@@ -108,16 +114,99 @@ class MetericsController extends Controller
 
     public function countIndustry($counties)
     {
-        $industry = (new \yii\db\Query())
-        ->select(['*'])
+        $query = (new \yii\db\Query())
+        ->select(['job_field_id'])
         ->from('job')
         ->where(['county_id' => $counties])
         ->all();
 
-        $industry = ArrayHelper::getColumn($industry, 'job_field_id');
-        $industry = array_count_values($industry);
+        $query = ArrayHelper::getColumn($query, 'job_field_id');
+        $query = array_count_values($query);
+
+        $indTotal = $query[1] + $query[2] + $query[3] +
+            $query[4] + $query[5];
+
+        $industry = [
+            'edu' => [
+                'num' => $query[1],
+                'perc' => (($query[1]/$indTotal) * 100)],
+            'health' => [
+                'num' => $query[2],
+                'perc' => (($query[2]/$indTotal) * 100)],
+            'agr' => [
+                'num' => $query[3],
+                'perc' => (($query[3]/$indTotal) * 100)],
+            'eng' => [
+                'num' => $query[4],
+                'perc' => (($query[4]/$indTotal) * 100)],
+            'bus' => [
+                'num' => $query[5],
+                'perc' => (($query[5]/$indTotal) * 100)],
+        ];
 
         return $industry;
+    }
+
+    public function countLastMonthIndustry($counties,$numCounties)
+    {
+        $lastMonth = [(int)$counties[0]['num_edu'],(int)$counties[0]['num_health'],
+                      (int)$counties[0]['num_agr'],(int)$counties[0]['num_eng'],
+                      (int)$counties[0]['num_bus']];
+
+        for($i = 1; $i < $numCounties; $i++){
+            $lastMonth[0] += (int)$counties[$i]['num_edu'];
+            $lastMonth[1] += (int)$counties[$i]['num_health'];
+            $lastMonth[2] += (int)$counties[$i]['num_agr'];
+            $lastMonth[3] += (int)$counties[$i]['num_eng'];
+            $lastMonth[4] += (int)$counties[$i]['num_bus'];
+        }
+
+        $indTotal = $lastMonth[0] + $lastMonth[1] + $lastMonth[2] +
+                    $lastMonth[3] + $lastMonth[4];
+
+        $lastMonthIndustry = [
+            'edu' => [
+                'num' => $lastMonth[0],
+                'perc' => (($lastMonth[0]/$indTotal) * 100)],
+            'health' => [
+                'num' => $lastMonth[1],
+                'perc' => (($lastMonth[1]/$indTotal) * 100)],
+            'agr' => [
+                'num' => $lastMonth[2],
+                'perc' => (($lastMonth[2]/$indTotal) * 100)],
+            'eng' => [
+                'num' => $lastMonth[3],
+                'perc' => (($lastMonth[3]/$indTotal) * 100)],
+            'bus' => [
+                'num' => $lastMonth[4],
+                'perc' => (($lastMonth[4]/$indTotal) * 100)],
+        ];
+
+        return $lastMonthIndustry;
+    }
+
+    public function countMonthChange($industry,$lastMonthIndustry)
+    {
+
+        $monthChange = [
+            'edu' => [
+                'num' => $industry['edu']['num']-$lastMonthIndustry['edu']['num'],
+                'perc' => $industry['edu']['perc']-$lastMonthIndustry['edu']['perc']],
+            'health' => [
+                'num' => $industry['health']['num']-$lastMonthIndustry['health']['num'],
+                'perc' => $industry['health']['perc']-$lastMonthIndustry['health']['perc']],
+            'agr' => [
+                'num' => $industry['agr']['num']-$lastMonthIndustry['agr']['num'],
+                'perc' => $industry['agr']['perc']-$lastMonthIndustry['agr']['perc']],
+            'eng' => [
+                'num' => $industry['eng']['num']-$lastMonthIndustry['eng']['num'],
+                'perc' => $industry['eng']['perc']-$lastMonthIndustry['eng']['perc']],
+            'bus' => [
+                'num' => $industry['bus']['num']-$lastMonthIndustry['bus']['num'],
+                'perc' => $industry['bus']['perc']-$lastMonthIndustry['bus']['perc']],
+        ];
+
+        return $monthChange;
     }
 
     public function countAllIndrPast($queryPast)
@@ -127,21 +216,48 @@ class MetericsController extends Controller
         return $allPast;
     }
 
-    public function countByIndrPast($queryPast)
+    public function countByIndrPast($queryPast,$numCounties)
     {
-        $byPast = array(
-                array('Date', 'Education', 'Health/Medicine', 'Agriculture', 
-                                'Engineering/Manufacturing/Tech','Business')
-            );
+        $dataArray = array();
 
-        FOREACH($queryPast as $row)
-        {
-            $temp = [$row['date'],$row['num_edu'],$row['num_health'],
-                     $row['num_agr'],$row['num_eng'],$row['num_bus']];
-            $byPast = array_unshift($byPast,$temp);
+        //Loop that creates a single row for each date in $dataArray
+        for ($i=0; $i < 10; $i++) { 
+            //Keeps track of place in $queryPast
+            $n = $numCounties * $i;
+
+            $day = substr($queryPast[$n]['date'],-2);
+            $month = substr($queryPast[$n]['date'],-5,2);
+            $date = $month.'/'.$day;
+
+            $temp = [
+                $date,(int)$queryPast[$n]['num_edu'],
+                (int)$queryPast[$n]['num_health'],(int)$queryPast[$n]['num_agr'],
+                (int)$queryPast[$n]['num_eng'],(int)$queryPast[$n]['num_bus']
+            ];
+
+            
+
+            //Loop that adds data from rows in $queryPast to the row in $dataArray
+            //which corresponds to their date
+            for($j=1; $j < $numCounties; $j++){
+                //Keeps track of place in $queryPast
+                $k = $n + $j;
+
+                $temp[1] += (int)$queryPast[$k]['num_edu'];
+                $temp[2] += (int)$queryPast[$k]['num_health'];
+                $temp[3] += (int)$queryPast[$k]['num_agr'];
+                $temp[4] += (int)$queryPast[$k]['num_eng'];
+                $temp[5] += (int)$queryPast[$k]['num_bus'];
+            }
+
+            array_unshift($dataArray,$temp);
         }
 
-        return $byPast;
+        $header = array('Date', 'Edu', 'Health/Med', 'Agric', 
+                                'Engr/Manu/Tech','Business');
+        array_unshift($dataArray, $header);
+
+        return $dataArray;
     }
 }
 

@@ -19,15 +19,17 @@
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
         "fruppel/yii2-googlecharts" : "*",
-        "scotthuangzl/yii2-google-chart": "dev-master"
+        "2amigos/yii2-multi-select-widget": "*",
+        "codeception/codeception": "2.0.*",
+        "codeception/specify": "*",
+        "codeception/verify": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
         "yiisoft/yii2-debug": "*",
         "yiisoft/yii2-gii": "*",
         "yiisoft/yii2-faker": "*",
-        "fruppel/yii2-googlecharts" : "*",
-        "scotthuangzl/yii2-google-chart": "dev-master"
+        "fruppel/yii2-googlecharts" : "*"
     },
     "config": {
         "process-timeout": 1800
